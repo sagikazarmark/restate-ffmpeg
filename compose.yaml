@@ -1,0 +1,48 @@
+services:
+  restate:
+    image: docker.restate.dev/restatedev/restate:latest
+    ports:
+      - 127.0.0.1:9070:9070
+      - 127.0.0.1:9071:9071
+      - 127.0.0.1:8080:8080
+    volumes:
+      - restate-data:/restate-data
+
+  rustfs:
+    image: rustfs/rustfs:alpha
+    ports:
+      - 127.0.0.1:9000:9000
+      - 127.0.0.1:9001:9001
+    volumes:
+      - ./var/rustfs/data:/data
+      - ./var/rustfs/logs:/logs
+
+  opendal-worker:
+    image: ghcr.io/sagikazarmark/restate-opendal:v0.7.0
+    environment:
+      - OPENDAL_PROFILE_RUSTFS_TYPE=s3
+      - OPENDAL_PROFILE_RUSTFS_ENDPOINT=http://rustfs:9000
+      - OPENDAL_PROFILE_RUSTFS_BUCKET=bucket
+      - OPENDAL_PROFILE_RUSTFS_REGION=auto
+      - OPENDAL_PROFILE_RUSTFS_ACCESS_KEY_ID=rustfsadmin
+      - OPENDAL_PROFILE_RUSTFS_SECRET_ACCESS_KEY=rustfsadmin
+      - OPENDAL_PROFILE_LOCAL_TYPE=s3
+      - OPENDAL_PROFILE_LOCAL_ENDPOINT=http://127.0.0.1:9000
+      - OPENDAL_PROFILE_LOCAL_BUCKET=bucket
+      - OPENDAL_PROFILE_LOCAL_REGION=auto
+      - OPENDAL_PROFILE_LOCAL_ACCESS_KEY_ID=rustfsadmin
+      - OPENDAL_PROFILE_LOCAL_SECRET_ACCESS_KEY=rustfsadmin
+
+  yt-dlp-worker:
+    image: ghcr.io/sagikazarmark/restate-yt-dlp:v0.7.0
+    environment:
+      - OBSTORE__CLIENT_OPTIONS__ALLOW_HTTP=true
+      - AWS_ENDPOINT_URL=http://rustfs:9000
+      - AWS_ACCESS_KEY_ID=rustfsadmin
+      - AWS_SECRET_ACCESS_KEY=rustfsadmin
+      # - VALKEY__DSN=redis://default:@valkey:6379/0
+      # - YT_DLP_DEFAULTS__RATELIMIT=500000
+      - RESTATE__HANDLERS__DOWNLOAD__INACTIVITY_TIMEOUT=02:00:00
+
+volumes:
+  restate-data:

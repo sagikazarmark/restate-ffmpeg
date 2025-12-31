@@ -1,0 +1,31 @@
+[workspace]
+members = ["lib", "bin"]
+resolver = "2"
+
+[workspace.package]
+edition = "2024"
+version = "0.0.0"
+description = "Restate service for ffmpeg"
+license = "MIT"
+repository = "https://github.com/sagikazarmark/restate-ffmpeg"
+homepage = "https://github.com/sagikazarmark/restate-ffmpeg"
+
+[workspace.dependencies]
+restate-ffmpeg = { path = "lib" }
+
+anyhow = "1.0"
+humantime-serde = "1.1.1"
+opendal = { version = "0.55" }
+opendal-util = { version = "0.6.0", features = ["restate"] }
+schemars = { version = "1.1", features = ["jiff02", "url2"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+restate-sdk = { version = "0.7", features = ["schemars"] }
+url = { version = "2.5", features = ["serde"] }
+
+[workspace.metadata.release]
+publish = false
+sign-commit = true
+sign-tag = true
+tag-message = "Release {{version}}"
+tag-prefix = ""
