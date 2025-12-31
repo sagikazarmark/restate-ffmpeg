@@ -1985,7 +1985,7 @@ dependencies = [
 
 [[package]]
 name = "restate-ffmpeg"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "content_disposition",
@@ -2009,7 +2009,7 @@ dependencies = [
 
 [[package]]
 name = "restate-ffmpeg-bin"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "clap",
