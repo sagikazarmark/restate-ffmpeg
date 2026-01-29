@@ -23,7 +23,7 @@ schemars = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 tempfile = "3.24.0"
-tokio = { version = "1.48.0", features = ["process"] }
+tokio = { version = "1.49.0", features = ["process"] }
 tokio-util = { version = "0.7.18", features = ["compat", "tracing"] }
 typed-path = "0.12.0"
 url = { workspace = true }
