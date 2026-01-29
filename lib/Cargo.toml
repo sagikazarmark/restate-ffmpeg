@@ -14,7 +14,7 @@ content_disposition = "0.4.0"
 futures = "0.3"
 http = "1.4.0"
 humantime-serde = { workspace = true }
-jiff = "0.2.17"
+jiff = "0.2.18"
 opendal = { workspace = true, features = [ "services-memory", "services-fs" ] }
 opendal-util = { workspace = true }
 paste = "1.0.15"
