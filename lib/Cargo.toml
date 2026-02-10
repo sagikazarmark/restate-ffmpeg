@@ -22,7 +22,7 @@ restate-sdk = { workspace = true }
 schemars = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
-tempfile = "3.24.0"
+tempfile = "3.25.0"
 tokio = { version = "1.49.0", features = ["process"] }
 tokio-util = { version = "0.7.18", features = ["compat", "tracing"] }
 typed-path = "0.12.2"
