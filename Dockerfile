@@ -36,7 +36,7 @@ RUN cp -r ./target/$(xx-cargo --print-target-triple)/release/restate-ffmpeg /usr
 
 
 # FROM alpine:3.23.0@sha256:51183f2cfa6320055da30872f211093f9ff1d3cf06f39a0bdb212314c5dc7375
-FROM debian:13.3-slim@sha256:77ba0164de17b88dd0bf6cdc8f65569e6e5fa6cd256562998b62553134a00ef0
+FROM debian:13.4-slim@sha256:26f98ccd92fd0a44d6928ce8ff8f4921b4d2f535bfa07555ee5d18f61429cf0c
 
 RUN apt-get update && \
     apt-get install -y ffmpeg && \
