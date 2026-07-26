@@ -2546,7 +2546,7 @@ dependencies = [
 
 [[package]]
 name = "restate-ffmpeg"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "content_disposition",
  "futures",
@@ -2568,7 +2568,7 @@ dependencies = [
 
 [[package]]
 name = "restate-ffmpeg-endpoint"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "anyhow",
  "clap",
