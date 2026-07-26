@@ -1,5 +1,5 @@
 mod config;
-mod config_restate;
+mod restate_config;
 
 use std::{collections::HashMap, path::PathBuf};
 
@@ -9,16 +9,12 @@ use figment::{
     Figment,
     providers::{Env, Format, Json, Toml, Yaml},
 };
-use opendal::{
-    DEFAULT_OPERATOR_REGISTRY,
-    layers::{LoggingLayer, MimeGuessLayer, RetryLayer, TracingLayer},
-    services,
-};
+use opendal::layers::{LoggingLayer, MimeGuessLayer, RetryLayer, TracingLayer};
 use opendal_util::{
     ChainOperatorFactory, DefaultOperatorFactory, LambdaOperatorFactory, OperatorFactory,
     ProfileOperatorFactory,
 };
-use restate_sdk::{endpoint::Endpoint, http_server::HttpServer};
+use restate_sdk::{endpoint::Endpoint, http_server::HttpServer, service::IntoServiceDefinition};
 
 use restate_ffmpeg::*;
 
@@ -32,16 +28,12 @@ async fn main() -> Result<()> {
 
     let config = cli.load_config()?;
 
-    // Register HTTP scheme (for some reason these are not registered by default)
-    DEFAULT_OPERATOR_REGISTRY.register::<services::Http>(services::HTTP_SCHEME);
-    DEFAULT_OPERATOR_REGISTRY.register::<services::Http>("https");
-
     let factory = create_factory(config.profiles.clone());
 
-    let mut endpoint = Endpoint::builder();
-
-    let service = ServiceImpl::new(factory);
-    endpoint = endpoint.bind(service.serve());
+    let service = ServiceImpl::new(factory)
+        .into_service_definition()
+        .options(config.restate.service.into());
+    let endpoint = Endpoint::builder().bind(service);
 
     let bind_addr = format!("0.0.0.0:{}", cli.port);
 
@@ -103,7 +95,7 @@ fn create_factory(profiles: HashMap<String, HashMap<String, String>>) -> impl Op
             .build(),
         |o| {
             o.layer(LoggingLayer::default())
-                .layer(TracingLayer)
+                .layer(TracingLayer::new())
                 .layer(RetryLayer::default())
                 .layer(MimeGuessLayer::default())
         },

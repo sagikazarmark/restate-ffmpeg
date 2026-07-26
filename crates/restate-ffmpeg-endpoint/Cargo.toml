@@ -1,16 +1,18 @@
 [package]
-name = "restate-ffmpeg-bin"
-edition = { workspace = true }
-version = { workspace = true }
-description = { workspace = true }
-license = { workspace = true }
-homepage = { workspace = true }
-repository = { workspace = true }
+name = "restate-ffmpeg-endpoint"
+version.workspace = true
+description = "Standalone endpoint hosting the FFmpeg service for Restate"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
 publish = false
 
 [[bin]]
 name = "restate-ffmpeg"
 path = "src/main.rs"
+doc = false
 
 [dependencies]
 restate-ffmpeg = { workspace = true }
@@ -29,7 +31,11 @@ opendal = { workspace = true, features = [
   "layers-mime-guess",
 ] }
 opendal-util = { workspace = true }
-restate-sdk = { workspace = true }
+restate-sdk = { workspace = true, features = [
+  "http_server",
+  "rust_crypto",
+  "tracing-span-filter",
+] }
 schemars = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }

@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
-use crate::config_restate::*;
+use crate::restate_config::*;
 
 #[derive(Deserialize, Serialize, Debug, Clone, Default)]
 pub struct Config {
