@@ -1,9 +1,11 @@
 # Restate service for [FFmpeg](https://ffmpeg.org)
 
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/sagikazarmark/restate-ffmpeg/ci.yaml?style=flat-square)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/sagikazarmark/restate-ffmpeg/dagger.yaml?style=flat-square)
 ![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/sagikazarmark/restate-ffmpeg/badge?style=flat-square)
 
 **Restate service for [FFmpeg](https://ffmpeg.org).**
+
+This workspace contains the reusable [`restate-ffmpeg`](crates/restate-ffmpeg) service and the [`restate-ffmpeg-endpoint`](crates/restate-ffmpeg-endpoint) executable.
 
 ## Quickstart
 

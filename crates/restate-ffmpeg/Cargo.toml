@@ -1,15 +1,15 @@
 [package]
 name = "restate-ffmpeg"
-edition = { workspace = true }
-version = { workspace = true }
-description = { workspace = true }
-license = { workspace = true }
-homepage = { workspace = true }
-repository = { workspace = true }
+version.workspace = true
+description = "FFmpeg service for Restate"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
 publish = false
 
 [dependencies]
-anyhow = { workspace = true }
 content_disposition = "0.4.0"
 futures = "0.3"
 http = "1.4.0"
@@ -17,8 +17,7 @@ humantime-serde = { workspace = true }
 jiff = "0.2.18"
 opendal = { workspace = true, features = [ "services-memory", "services-fs" ] }
 opendal-util = { workspace = true }
-paste = "1.0.15"
-restate-sdk = { workspace = true }
+restate-sdk = { workspace = true, features = ["hyper", "schemars"] }
 schemars = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }

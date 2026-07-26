@@ -1,6 +1,5 @@
 use std::{collections::HashMap, process::Stdio};
 
-use anyhow::Result;
 use futures::io::AsyncWriteExt as _;
 use opendal::Operator;
 use opendal::services::Fs;
@@ -14,16 +13,6 @@ use tokio::io::AsyncWriteExt;
 use tokio::process::Command;
 use tokio_util::compat::FuturesAsyncWriteCompatExt;
 use url::Url;
-
-#[restate_sdk::service]
-#[name = "FFmpeg"]
-pub trait Service {
-    /// Run ffmpeg command.
-    async fn ffmpeg(request: Json<FfmpegRequest>) -> HandlerResult<Json<FfmpegResponse>>;
-
-    /// Run ffprobe command.
-    async fn ffprobe(request: Json<FfprobeRequest>) -> HandlerResult<Json<FfprobeResponse>>;
-}
 
 #[derive(Debug, Clone, Deserialize, Serialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
@@ -66,27 +55,51 @@ pub struct Output {
 
 pub struct ServiceImpl<F>
 where
-    F: OperatorFactory,
+    F: OperatorFactory + 'static,
 {
     factory: F,
 }
 
 impl<F> ServiceImpl<F>
 where
-    F: OperatorFactory,
+    F: OperatorFactory + 'static,
 {
     pub fn new(factory: F) -> Self {
         Self { factory }
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use opendal_util::DefaultOperatorFactory;
+    use restate_sdk::{discovery::ServiceType, service::Discoverable};
+
+    use super::ServiceImpl;
+
+    #[test]
+    fn discovers_ffmpeg_api() {
+        let service = <ServiceImpl<DefaultOperatorFactory> as Discoverable>::discover();
+
+        assert_eq!(service.name.as_str(), "FFmpeg");
+        assert_eq!(service.ty, ServiceType::Service);
+
+        let mut handlers: Vec<_> = service
+            .handlers
+            .iter()
+            .map(|handler| handler.name.as_str())
+            .collect();
+        handlers.sort_unstable();
+        assert_eq!(handlers, ["ffmpeg", "ffprobe"]);
+    }
+}
+
 impl<F> ServiceImpl<F>
 where
-    F: OperatorFactory,
+    F: OperatorFactory + 'static,
 {
     async fn _ffmpeg(&self, request: FfmpegRequest) -> HandlerResult<FfmpegResponse> {
         // Check if output is stdout (indicated by "-" as last arg or output file)
-        let output_to_stdout = request.args.last().map_or(false, |s| s == "-");
+        let output_to_stdout = request.args.last().is_some_and(|s| s == "-");
 
         let work_dir = TempDir::new()?;
 
@@ -475,7 +488,7 @@ fn example_ffprobe_response() -> FfprobeResponse {
 
 impl<F> ServiceImpl<F>
 where
-    F: OperatorFactory,
+    F: OperatorFactory + 'static,
 {
     async fn _ffprobe(&self, request: FfprobeRequest) -> HandlerResult<FfprobeResponse> {
         let mut cmd = Command::new("ffprobe");
@@ -516,10 +529,13 @@ fn parse_uri(uri: Url) -> (String, String) {
     (uri.to_string(), path)
 }
 
-impl<F> Service for ServiceImpl<F>
+#[restate_sdk::service(name = "FFmpeg")]
+impl<F> ServiceImpl<F>
 where
-    F: OperatorFactory,
+    F: OperatorFactory + 'static,
 {
+    /// Run ffmpeg command.
+    #[handler]
     async fn ffmpeg(
         &self,
         ctx: Context<'_>,
@@ -527,9 +543,12 @@ where
     ) -> HandlerResult<Json<FfmpegResponse>> {
         Ok(ctx
             .run(async || Ok(self._ffmpeg(request.into_inner()).await.map(Json)?))
+            .name("ffmpeg")
             .await?)
     }
 
+    /// Run ffprobe command.
+    #[handler]
     async fn ffprobe(
         &self,
         ctx: Context<'_>,
@@ -537,6 +556,7 @@ where
     ) -> HandlerResult<Json<FfprobeResponse>> {
         Ok(ctx
             .run(async || Ok(self._ffprobe(request.into_inner()).await.map(Json)?))
+            .name("ffprobe")
             .await?)
     }
 }
