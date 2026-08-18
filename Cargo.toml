@@ -15,7 +15,7 @@ restate-ffmpeg = { path = "crates/restate-ffmpeg" }
 
 anyhow = "1.0"
 humantime-serde = "1.1.1"
-opendal = "0.57"
+opendal = "0.58"
 opendal-util = "0.7"
 schemars = { version = "1.2", features = ["jiff02", "url2"] }
 serde = { version = "1.0", features = ["derive"] }
