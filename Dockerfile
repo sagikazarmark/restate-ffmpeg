@@ -3,7 +3,7 @@
 
 FROM --platform=$BUILDPLATFORM tonistiigi/xx:1.9.0@sha256:c64defb9ed5a91eacb37f96ccc3d4cd72521c4bd18d5442905b95e2226b0e707 AS xx
 
-FROM --platform=$BUILDPLATFORM rust:1.97.1-bookworm@sha256:77fac8b98f9f46062bb680b6d25d5bcaabfc400143952ebc572e924bcbedc3fa AS base
+FROM --platform=$BUILDPLATFORM rust:1.97.1-bookworm@sha256:0e2bcaef56d041a486784e54104a81aebe0da44bd03019bd70bc0401e42e4a97 AS base
 
 ARG CARGO_CHEF_VERSION=0.1.77
 RUN cargo install cargo-chef --version $CARGO_CHEF_VERSION --locked
@@ -43,7 +43,7 @@ RUN xx-verify ./target/$(xx-cargo --print-target-triple)/release/restate-ffmpeg
 RUN cp ./target/$(xx-cargo --print-target-triple)/release/restate-ffmpeg /usr/local/bin/restate-ffmpeg
 
 
-FROM debian:13.6-slim@sha256:020c0d20b9880058cbe785a9db107156c3c75c2ac944a6aa7ab59f2add76a7bd
+FROM debian:13.6-slim@sha256:d7e12182ce18b85b93007c1dedf31f2d29e01ccf3182cc4017c709b6259bc132
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ffmpeg && \
